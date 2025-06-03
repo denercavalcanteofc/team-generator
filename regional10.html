@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Distribuidor de Grupos regional 10</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      margin: 0;
+      background: #f0f0f0;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      margin: 15px 0;
+      gap: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    input[type="number"] {
+      width: 60px;
+      padding: 5px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .info {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .groups {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .group {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 10px;
+    }
+
+    .group h2 {
+      margin-top: 0;
+      padding: 10px;
+      color: white;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .red h2 { background: #e74c3c; }
+    .yellow h2 { background: #f1c40f; color: #333; }
+    .green h2 { background: #2ecc71; }
+    .blue h2 { background: #3498db; }
+
+    .group ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .group li {
+      background: #f9f9f9;
+      padding: 6px 10px;
+      margin: 5px 0;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .group li:hover {
+      background: #e0e0e0;
+    }
+
+    .count {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .selector {
+      margin-top: 20px;
+      background: #fff3cd;
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid #ffeeba;
+    }
+
+    @media (max-width: 600px) {
+      .controls {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Distribuidor de Grupos regional 10</h1>
+
+  <textarea id="names" placeholder="Digite um nome por linha..."></textarea>
+  <div class="info" id="liveCount">Total de nomes: 0</div>
+
+  <div class="controls">
+    <label for="groupSize">Pessoas por grupo:</label>
+    <input type="number" id="groupSize" value="7" min="1" />
+    <button onclick="sortearGrupos()">Sortear</button>
+  </div>
+
+  <div class="groups">
+    <div class="group red">
+      <h2>Grupo Vermelho</h2>
+      <ul id="grupo1"></ul>
+      <div class="count" id="count1"></div>
+    </div>
+    <div class="group yellow">
+      <h2>Grupo Amarelo</h2>
+      <ul id="grupo2"></ul>
+      <div class="count" id="count2"></div>
+    </div>
+    <div class="group green">
+      <h2>Grupo Verde</h2>
+      <ul id="grupo3"></ul>
+      <div class="count" id="count3"></div>
+    </div>
+    <div class="group blue">
+      <h2>Grupo Azul</h2>
+      <ul id="grupo4"></ul>
+      <div class="count" id="count4"></div>
+    </div>
+  </div>
+
+  <div class="selector" id="sobrando" style="display: none;">
+    <span id="sobrandoNome"></span> sobrou. Escolha um grupo:
+    <select id="grupoExtra">
+      <option value="0">Grupo Vermelho</option>
+      <option value="1">Grupo Amarelo</option>
+      <option value="2">Grupo Verde</option>
+      <option value="3">Grupo Azul</option>
+    </select>
+    <button onclick="adicionarSobrando()">Adicionar</button>
+  </div>
+
+  <script>
+    let grupos = [[], [], [], []];
+    let pessoaSobrando = "";
+
+    document.getElementById("names").addEventListener("input", () => {
+      const nomes = document.getElementById("names").value
+        .split("\n")
+        .map(n => n.trim())
+        .filter(n => n);
+      document.getElementById("liveCount").textContent = `Total de nomes: ${nomes.length}`;
+    });
+
+    function sortearGrupos() {
+      const input = document.getElementById("names").value.trim();
+      const nomes = input.split("\n").map(n => n.trim()).filter(n => n);
+      const grupoSize = parseInt(document.getElementById("groupSize").value);
+      grupos = [[], [], [], []];
+      pessoaSobrando = "";
+
+      if (nomes.length === 0) {
+        alert("Insira pelo menos um nome!");
+        return;
+      }
+
+      document.getElementById("sobrando").style.display = "none";
+
+      const shuffled = nomes.sort(() => Math.random() - 0.5);
+      const maxPessoas = grupoSize * 4;
+
+      let limite = Math.min(maxPessoas, nomes.length);
+      let grupoAtual = 0;
+
+      for (let i = 0; i < limite; i++) {
+        while (grupos[grupoAtual].length >= grupoSize) {
+          grupoAtual = (grupoAtual + 1) % 4;
+        }
+        grupos[grupoAtual].push(shuffled[i]);
+        grupoAtual = (grupoAtual + 1) % 4;
+      }
+
+      if (nomes.length > maxPessoas) {
+        pessoaSobrando = shuffled[maxPessoas];
+        document.getElementById("sobrandoNome").textContent = pessoaSobrando;
+        document.getElementById("sobrando").style.display = "block";
+      }
+
+      atualizarGrupos();
+    }
+
+    function atualizarGrupos() {
+      for (let i = 0; i < 4; i++) {
+        const ul = document.getElementById(`grupo${i + 1}`);
+        ul.innerHTML = "";
+        grupos[i].forEach((nome, index) => {
+          const li = document.createElement("li");
+          li.textContent = nome;
+          li.onclick = () => moverPessoa(i, index);
+          ul.appendChild(li);
+        });
+        document.getElementById(`count${i + 1}`).textContent = `Total: ${grupos[i].length}`;
+      }
+    }
+
+    function adicionarSobrando() {
+      const indice = parseInt(document.getElementById("grupoExtra").value);
+      grupos[indice].push(pessoaSobrando);
+      pessoaSobrando = "";
+      document.getElementById("sobrando").style.display = "none";
+      atualizarGrupos();
+    }
+
+    function moverPessoa(origem, index) {
+      const nome = grupos[origem][index];
+      const destino = prompt(
+        `Mover "${nome}" para qual grupo? (1=Vermelho, 2=Amarelo, 3=Verde, 4=Azul)`
+      );
+
+      const destIdx = parseInt(destino) - 1;
+      if (destIdx >= 0 && destIdx <= 3 && destIdx !== origem) {
+        grupos[origem].splice(index, 1);
+        grupos[destIdx].push(nome);
+        atualizarGrupos();
+      }
+    }
+  </script>
+</body>
+</html>
