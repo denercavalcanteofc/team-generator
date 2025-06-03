@@ -2,12 +2,17 @@ body {
     font-family: Arial, sans-serif;
     padding: 20px;
     margin: 0;
-    background: #f0f0f0;
+    background: #e5e3e3;
 }
 
 h1 {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    border-radius: 10px;
+    border: 1px solid #cacaca;
+    color: rgb(34, 34, 34);
+    background: #c8c8c8;
+    padding: 20px;
 }
 
 textarea {
@@ -23,18 +28,23 @@ textarea {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    align-items: center;
+    align-items: left;
     margin: 15px 0;
     gap: 10px;
+    flex-direction: column;
 }
 
 button {
-    padding: 10px 20px;
+    padding: 15px 100px;
     background: #007bff;
     color: #fff;
     border: none;
     border-radius: 8px;
     cursor: pointer;
+    margin: auto;
+    display: block;
+    margin-top: -70px;
+    margin-bottom: 30px;
 }
 
 input[type="number"] {

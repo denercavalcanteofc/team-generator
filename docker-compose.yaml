@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+  app:
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/app
+    image: webdevops/php-apache:8.0
+    working_dir: /app
